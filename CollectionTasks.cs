@@ -46,5 +46,58 @@ namespace ConsoleApp1
             }
             Console.WriteLine();
         }
+        
+        public static void Task2(Checked c)
+        {
+            LinkedList<int> numbersList = new LinkedList<int>();
+            LinkedListNode<int> currentNode = null;
+            int elementsCount = 0;
+            int index = 0;
+            int currentNumber = 0;
+            int targetElement = 0;
+            int tempValue = 0;
+
+            elementsCount = c.ReadIntInRange(
+                "Введите количество элементов: ", 1, 100);
+
+            for (index = 0; index < elementsCount; index++)
+            {
+                currentNumber = c.ReadInt(
+                    $"Введите элемент {index + 1}: ");
+                numbersList.AddLast(currentNumber);
+            }
+
+            targetElement = c.ReadInt("Введите элемент E: ");
+
+            currentNode = numbersList.First;
+            while (currentNode != null)
+            {
+                if (currentNode.Value == targetElement)
+                {
+                    if (currentNode.Previous != null && 
+                        currentNode.Next != null)
+                    {
+                        if (currentNode.Previous.Value != 
+                            currentNode.Next.Value)
+                        {
+                            tempValue = currentNode.Previous.Value;
+                            currentNode.Previous.Value = 
+                                currentNode.Next.Value;
+                            currentNode.Next.Value = tempValue;
+                        }
+                    }
+                }
+                currentNode = currentNode.Next;
+            }
+
+            Console.WriteLine("Список после изменений:");
+            currentNode = numbersList.First;
+            while (currentNode != null)
+            {
+                Console.Write(currentNode.Value + " ");
+                currentNode = currentNode.Next;
+            }
+            Console.WriteLine();
+        }
     }
 }

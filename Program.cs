@@ -13,7 +13,10 @@ namespace ConsoleApp1
             while (isRunning)
             {
                 Console.WriteLine("\n0 - Выход из программы");
-                Console.WriteLine("1 - Задание 1 (List)");
+                Console.WriteLine("1 - List");
+                Console.WriteLine("2 - LinkedList");
+                
+                Console.Write("Введите номер задания: ");
                 userChoice = Console.ReadLine();
 
                 switch (userChoice)
@@ -23,6 +26,9 @@ namespace ConsoleApp1
                         break;
                     case "1":
                         CollectionTasks.Task1(c);
+                        break;
+                    case "2":
+                        CollectionTasks.Task2(c);
                         break;
                     default:
                         Console.WriteLine("Такого пункта нет.");
