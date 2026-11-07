@@ -99,5 +99,87 @@ namespace ConsoleApp1
             }
             Console.WriteLine();
         }
+        
+                public static void Task3(Checked c)
+        {
+            HashSet<string> allLanguages = new HashSet<string>();
+            HashSet<string> knownByEveryone = new HashSet<string>();
+            HashSet<string> knownByAnyone = new HashSet<string>();
+            HashSet<string> knownByNoOne = new HashSet<string>();
+            List<HashSet<string>> employees = 
+                new List<HashSet<string>>();
+            HashSet<string> currentEmployeeLangs = 
+                new HashSet<string>();
+            int langCount = 0;
+            int employeeCount = 0;
+            int index = 0;
+            int langIndex = 0;
+            int empLangCount = 0;
+            string currentLang = "";
+
+            langCount = c.ReadIntInRange(
+                "Введите количество языков: ", 1, 50);
+            
+            Console.WriteLine("Введите языки:");
+            for (index = 0; index < langCount; index++)
+            {
+                currentLang = c.ReadString(
+                    $"Язык {index + 1}: ").ToLower();
+                allLanguages.Add(currentLang);
+            }
+
+            employeeCount = c.ReadIntInRange(
+                "Введите количество сотрудников: ", 1, 20);
+
+            for (index = 0; index < employeeCount; index++)
+            {
+                empLangCount = c.ReadIntInRange(
+                    $"Сотрудник {index + 1}, сколько знает: ", 
+                    0, langCount);
+                
+                currentEmployeeLangs = new HashSet<string>();
+                for (langIndex = 0; langIndex < empLangCount; 
+                     langIndex++)
+                {
+                    currentLang = c.ReadString(
+                        $"  Язык {langIndex + 1}: ").ToLower();
+                    currentEmployeeLangs.Add(currentLang);
+                }
+                employees.Add(currentEmployeeLangs);
+            }
+
+            knownByEveryone.UnionWith(employees[0]);
+            knownByAnyone.UnionWith(employees[0]);
+            
+            for (index = 1; index < employeeCount; index++)
+            {
+                knownByEveryone.IntersectWith(employees[index]);
+                knownByAnyone.UnionWith(employees[index]);
+            }
+
+            knownByNoOne.UnionWith(allLanguages);
+            knownByNoOne.ExceptWith(knownByAnyone);
+
+            Console.WriteLine("\nЗнают все сотрудники:");
+            foreach (string lang in knownByEveryone)
+            {
+                Console.Write(lang + " ");
+            }
+            Console.WriteLine();
+
+            Console.WriteLine("Знает хотя бы один:");
+            foreach (string lang in knownByAnyone)
+            {
+                Console.Write(lang + " ");
+            }
+            Console.WriteLine();
+
+            Console.WriteLine("Не знает никто:");
+            foreach (string lang in knownByNoOne)
+            {
+                Console.Write(lang + " ");
+            }
+            Console.WriteLine();
+        }
     }
 }
