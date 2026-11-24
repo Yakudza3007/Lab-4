@@ -17,7 +17,7 @@ namespace ConsoleApp1
                 Console.WriteLine("2 - LinkedList");
                 Console.WriteLine("3 - HashSet");
                 Console.WriteLine("4 - HashSet");
-                Console.WriteLine("5 - Dictionary/SortedList");
+                Console.WriteLine("5 - Оптимальный поиск");
                 
                 Console.Write("Введите номер задания: ");
                 userChoice = Console.ReadLine();
@@ -28,24 +28,20 @@ namespace ConsoleApp1
                         isRunning = false;
                         break;
                     case "1":
-                        CollectionTasks.Task1(c);
+                        CollectionTasks.Task1<string>(c);
                         break;
                     case "2":
-                        CollectionTasks.Task2(c);
+                        CollectionTasks.Task2<string>(c);
                         break;
-                    
                     case "3":
                         CollectionTasks.Task3(c);
                         break;
-                    
                     case "4":
                         CollectionTasks.Task4(c);
                         break;
-                    
                     case "5":
                         CollectionTasks.Task5(c);
                         break;
-                    
                     default:
                         Console.WriteLine("Такого пункта нет.");
                         break;

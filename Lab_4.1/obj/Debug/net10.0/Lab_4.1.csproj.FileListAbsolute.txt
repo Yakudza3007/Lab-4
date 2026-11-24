@@ -12,3 +12,4 @@ C:\Users\yakun\RiderProjects\ConsoleApp2\Lab_4.1\obj\Debug\net10.0\refint\Lab_4.
 C:\Users\yakun\RiderProjects\ConsoleApp2\Lab_4.1\obj\Debug\net10.0\Lab_4.1.pdb
 C:\Users\yakun\RiderProjects\ConsoleApp2\Lab_4.1\obj\Debug\net10.0\Lab_4.1.genruntimeconfig.cache
 C:\Users\yakun\RiderProjects\ConsoleApp2\Lab_4.1\obj\Debug\net10.0\ref\Lab_4.1.dll
+C:\Users\yakun\RiderProjects\ConsoleApp2\Lab_4.1\obj\Debug\net10.0\Lab_4.1.sourcelink.json

@@ -6,241 +6,268 @@ namespace ConsoleApp1
 {
     internal class CollectionTasks
     {
-        private struct Student
+        private static T ReadValue<T>(Checked c, string prompt)
         {
-            private string _surname;
-            private string _name;
-            private int _school;
-            private int _score;
-
-            public Student(string surname, string name, 
-                int school, int score)
+            T result = default(T);
+            string input = "";
+            while (true)
             {
-                _surname = surname;
-                _name = name;
-                _school = school;
-                _score = score;
-            }
-
-            public string Surname { get { return _surname; } }
-            public string Name { get { return _name; } }
-            public int School { get { return _school; } }
-            public int Score { get { return _score; } }
-        }
-
-        public static void Task1(Checked c)
-        {
-            List<int> numberList = new List<int>();
-            List<int> uniqueList = new List<int>();
-            HashSet<int> seenNumbers = new HashSet<int>();
-            int elementsCount = 0;
-            int index = 0;
-            int currentNumber = 0;
-
-            elementsCount = c.ReadIntInRange(
-                "Введите количество элементов: ", 1, 100);
-
-            for (index = 0; index < elementsCount; index++)
-            {
-                currentNumber = c.ReadInt(
-                    $"Введите элемент {index + 1}: ");
-                numberList.Add(currentNumber);
-            }
-
-            Console.WriteLine("Исходный список:");
-            for (index = 0; index < numberList.Count; index++)
-            {
-                Console.Write(numberList[index] + " ");
-            }
-            Console.WriteLine();
-
-            for (index = 0; index < numberList.Count; index++)
-            {
-                if (seenNumbers.Add(numberList[index]))
+                input = c.ReadString(prompt);
+                try
                 {
-                    uniqueList.Add(numberList[index]);
+                    result = (T)Convert.ChangeType(
+                        input, typeof(T));
+                    return result;
+                }
+                catch
+                {
+                    Console.WriteLine("Ошибка: неверный тип.");
                 }
             }
+        }
+
+        private static List<T> ReadListTask1<T>(Checked c)
+        {
+            List<T> list = new List<T>();
+            int count = 0;
+            int index = 0;
+
+            count = c.ReadIntInRange(
+                "Введите количество элементов: ", 1, 100);
+
+            for (index = 0; index < count; index++)
+            {
+                list.Add(ReadValue<T>(c, 
+                    $"Элемент {index + 1}: "));
+            }
+            return list;
+        }
+
+        private static List<T> FilterUniqueTask1<T>(
+            List<T> list)
+        {
+            List<T> result = new List<T>();
+            HashSet<T> seen = new HashSet<T>();
+            int index = 0;
+
+            for (index = 0; index < list.Count; index++)
+            {
+                if (seen.Add(list[index]))
+                {
+                    result.Add(list[index]);
+                }
+            }
+            return result;
+        }
+
+        public static void Task1<T>(Checked c)
+        {
+            List<T> original = new List<T>();
+            List<T> unique = new List<T>();
+            int index = 0;
+
+            original = ReadListTask1<T>(c);
+
+            Console.WriteLine("Исходный список:");
+            for (index = 0; index < original.Count; index++)
+            {
+                Console.Write(original[index] + " ");
+            }
+            Console.WriteLine();
+
+            unique = FilterUniqueTask1<T>(original);
 
             Console.WriteLine("Список без повторений:");
-            for (index = 0; index < uniqueList.Count; index++)
+            for (index = 0; index < unique.Count; index++)
             {
-                Console.Write(uniqueList[index] + " ");
+                Console.Write(unique[index] + " ");
             }
             Console.WriteLine();
         }
-        
-        public static void Task2(Checked c)
-        {
-            LinkedList<int> numbersList = new LinkedList<int>();
-            LinkedListNode<int> currentNode = null;
-            int elementsCount = 0;
-            int index = 0;
-            int currentNumber = 0;
-            int targetElement = 0;
-            int tempValue = 0;
 
-            elementsCount = c.ReadIntInRange(
+        private static LinkedList<T> ReadLinkedListTask2<T>(
+            Checked c)
+        {
+            LinkedList<T> list = new LinkedList<T>();
+            int count = 0;
+            int index = 0;
+
+            count = c.ReadIntInRange(
                 "Введите количество элементов: ", 1, 100);
 
-            for (index = 0; index < elementsCount; index++)
+            for (index = 0; index < count; index++)
             {
-                currentNumber = c.ReadInt(
-                    $"Введите элемент {index + 1}: ");
-                numbersList.AddLast(currentNumber);
+                list.AddLast(ReadValue<T>(c, 
+                    $"Элемент {index + 1}: "));
             }
+            return list;
+        }
 
-            targetElement = c.ReadInt("Введите элемент E: ");
+        private static void SwapNeighborsTask2<T>(
+            LinkedList<T> list, T target)
+        {
+            LinkedListNode<T> current = null;
+            T temp = default(T);
 
-            currentNode = numbersList.First;
-            while (currentNode != null)
+            current = list.First;
+            while (current != null)
             {
-                if (currentNode.Value == targetElement)
+                if (current.Value.Equals(target))
                 {
-                    if (currentNode.Previous != null && 
-                        currentNode.Next != null)
+                    if (current.Previous != null && 
+                        current.Next != null)
                     {
-                        if (currentNode.Previous.Value != 
-                            currentNode.Next.Value)
+                        if (!current.Previous.Value.Equals(
+                            current.Next.Value))
                         {
-                            tempValue = 
-                                currentNode.Previous.Value;
-                            currentNode.Previous.Value = 
-                                currentNode.Next.Value;
-                            currentNode.Next.Value = tempValue;
+                            temp = current.Previous.Value;
+                            current.Previous.Value = 
+                                current.Next.Value;
+                            current.Next.Value = temp;
                         }
                     }
                 }
-                currentNode = currentNode.Next;
+                current = current.Next;
             }
+        }
+
+        public static void Task2<T>(Checked c)
+        {
+            LinkedList<T> list = new LinkedList<T>();
+            LinkedListNode<T> current = null;
+            T target = default(T);
+
+            list = ReadLinkedListTask2<T>(c);
+            target = ReadValue<T>(c, "Введите элемент E: ");
+
+            SwapNeighborsTask2<T>(list, target);
 
             Console.WriteLine("Список после изменений:");
-            currentNode = numbersList.First;
-            while (currentNode != null)
+            current = list.First;
+            while (current != null)
             {
-                Console.Write(currentNode.Value + " ");
-                currentNode = currentNode.Next;
+                Console.Write(current.Value + " ");
+                current = current.Next;
             }
             Console.WriteLine();
         }
-        
-        public static void Task3(Checked c)
+
+        private static void ReadLanguagesTask3(Checked c, 
+            HashSet<string> all, List<HashSet<string>> emps)
         {
-            HashSet<string> allLanguages = new HashSet<string>();
-            HashSet<string> knownByEveryone = 
-                new HashSet<string>();
-            HashSet<string> knownByAnyone = 
-                new HashSet<string>();
-            HashSet<string> knownByNoOne = 
-                new HashSet<string>();
-            List<HashSet<string>> employees = 
-                new List<HashSet<string>>();
-            List<string> resultList = new List<string>();
-            HashSet<string> currentLangs = 
-                new HashSet<string>();
             int langCount = 0;
-            int employeeCount = 0;
+            int empCount = 0;
             int index = 0;
             int langIndex = 0;
             int empLangCount = 0;
-            string currentLang = "";
+            string lang = "";
+            HashSet<string> current = null;
 
             langCount = c.ReadIntInRange(
                 "Введите количество языков: ", 1, 50);
-
+                
             Console.WriteLine("Введите языки:");
             for (index = 0; index < langCount; index++)
             {
                 while (true)
                 {
-                    currentLang = c.ReadString(
+                    lang = c.ReadString(
                         $"Язык {index + 1}: ").ToLowerInvariant();
-
-                    if (allLanguages.Add(currentLang))
-                    {
-                        break;
-                    }
+                    if (all.Add(lang)) break;
                     Console.WriteLine("Такой язык уже есть.");
                 }
             }
 
-            employeeCount = c.ReadIntInRange(
+            empCount = c.ReadIntInRange(
                 "Введите количество сотрудников: ", 1, 20);
 
-            for (index = 0; index < employeeCount; index++)
+            for (index = 0; index < empCount; index++)
             {
-                currentLangs = new HashSet<string>();
+                current = new HashSet<string>();
                 Console.WriteLine($"\nСотрудник {index + 1}:");
                 
                 empLangCount = c.ReadIntInRange(
-                    "Сколько языков знает? ", 0, 
-                    allLanguages.Count);
+                    "Сколько языков знает? ", 0, all.Count);
 
                 for (langIndex = 0; langIndex < empLangCount; 
                      langIndex++)
                 {
                     while (true)
                     {
-                        currentLang = c.ReadString(
+                        lang = c.ReadString(
                             $"Язык {langIndex + 1}: ")
                             .ToLowerInvariant();
 
-                        if (!allLanguages.Contains(currentLang))
-                        {
-                            Console.WriteLine("Нет в списке.");
-                            continue;
-                        }
-
-                        if (!currentLangs.Add(currentLang))
-                        {
-                            Console.WriteLine("Уже добавлен.");
-                            continue;
-                        }
+                        if (!all.Contains(lang)) continue;
+                        if (!current.Add(lang)) continue;
                         break;
                     }
                 }
-                employees.Add(currentLangs);
+                emps.Add(current);
             }
+        }
 
-            knownByEveryone.UnionWith(employees[0]);
-            knownByAnyone.UnionWith(employees[0]);
+        private static void CalculateStatsTask3(
+            List<HashSet<string>> emps, HashSet<string> all, 
+            HashSet<string> everyone, HashSet<string> anyone, 
+            HashSet<string> noOne)
+        {
+            int index = 0;
 
-            for (index = 1; index < employeeCount; index++)
+            everyone.UnionWith(emps[0]);
+            anyone.UnionWith(emps[0]);
+
+            for (index = 1; index < emps.Count; index++)
             {
-                knownByEveryone.IntersectWith(employees[index]);
-                knownByAnyone.UnionWith(employees[index]);
+                everyone.IntersectWith(emps[index]);
+                anyone.UnionWith(emps[index]);
             }
 
-            knownByNoOne.UnionWith(allLanguages);
-            knownByNoOne.ExceptWith(knownByAnyone);
+            noOne.UnionWith(all);
+            noOne.ExceptWith(anyone);
+        }
+
+        public static void Task3(Checked c)
+        {
+            HashSet<string> all = new HashSet<string>();
+            List<HashSet<string>> emps = 
+                new List<HashSet<string>>();
+            HashSet<string> everyone = new HashSet<string>();
+            HashSet<string> anyone = new HashSet<string>();
+            HashSet<string> noOne = new HashSet<string>();
+            List<string> result = new List<string>();
+            int index = 0;
+
+            ReadLanguagesTask3(c, all, emps);
+            CalculateStatsTask3(emps, all, everyone, anyone, noOne);
 
             Console.WriteLine("\nЗнают все:");
-            resultList.AddRange(knownByEveryone);
-            for (index = 0; index < resultList.Count; index++)
+            result.AddRange(everyone);
+            for (index = 0; index < result.Count; index++)
             {
-                Console.Write(resultList[index] + " ");
+                Console.Write(result[index] + " ");
             }
             Console.WriteLine();
 
             Console.WriteLine("Знает хотя бы один:");
-            resultList.Clear();
-            resultList.AddRange(knownByAnyone);
-            for (index = 0; index < resultList.Count; index++)
+            result.Clear();
+            result.AddRange(anyone);
+            for (index = 0; index < result.Count; index++)
             {
-                Console.Write(resultList[index] + " ");
+                Console.Write(result[index] + " ");
             }
             Console.WriteLine();
 
             Console.WriteLine("Не знает никто:");
-            resultList.Clear();
-            resultList.AddRange(knownByNoOne);
-            for (index = 0; index < resultList.Count; index++)
+            result.Clear();
+            result.AddRange(noOne);
+            for (index = 0; index < result.Count; index++)
             {
-                Console.Write(resultList[index] + " ");
+                Console.Write(result[index] + " ");
             }
             Console.WriteLine();
         }
-                
+
         private static void FillFileTask4(string fileName, 
             Checked c)
         {
@@ -263,14 +290,41 @@ namespace ConsoleApp1
             }
         }
 
+        private static HashSet<char> GetFirstLettersTask4(
+            string fileName)
+        {
+            HashSet<char> letters = new HashSet<char>();
+            string line = "";
+            int i = 0;
+
+            using (StreamReader reader = 
+                new StreamReader(fileName))
+            {
+                while ((line = reader.ReadLine()) != null)
+                {
+                    for (i = 0; i < line.Length; i++)
+                    {
+                        if (char.IsLetter(line[i]))
+                        {
+                            if (i == 0 || 
+                                !char.IsLetter(line[i - 1]))
+                            {
+                                letters.Add(
+                                    char.ToLowerInvariant(line[i]));
+                            }
+                        }
+                    }
+                }
+            }
+            return letters;
+        }
+
         public static void Task4(Checked c)
         {
             string fileName = "task4_text.txt";
             HashSet<char> firstLetters = new HashSet<char>();
-            List<char> sortedLetters = new List<char>();
-            string line = "";
+            List<char> sorted = new List<char>();
             int index = 0;
-            int charIndex = 0;
 
             FillFileTask4(fileName, c);
 
@@ -280,40 +334,16 @@ namespace ConsoleApp1
                 return;
             }
 
-            using (StreamReader reader = 
-                new StreamReader(fileName))
-            {
-                while ((line = reader.ReadLine()) != null)
-                {
-                    for (charIndex = 0; 
-                         charIndex < line.Length; 
-                         charIndex++)
-                    {
-                        if (char.IsLetter(line[charIndex]))
-                        {
-                            if (charIndex == 0 || 
-                                !char.IsLetter(line[charIndex - 1]))
-                            {
-                                firstLetters.Add(
-                                    char.ToLowerInvariant(
-                                        line[charIndex]));
-                            }
-                        }
-                    }
-                }
-            }
-
-            sortedLetters.AddRange(firstLetters);
-            sortedLetters.Sort();
+            firstLetters = GetFirstLettersTask4(fileName);
+            sorted.AddRange(firstLetters);
+            sorted.Sort();
 
             Console.WriteLine("Буквы, с которых " +
                               "начинаются слова:");
                               
-            for (index = 0; 
-                 index < sortedLetters.Count; 
-                 index++)
+            for (index = 0; index < sorted.Count; index++)
             {
-                Console.Write(sortedLetters[index] + " ");
+                Console.Write(sorted[index] + " ");
             }
             Console.WriteLine();
         }
@@ -321,23 +351,23 @@ namespace ConsoleApp1
         private static void FillFileTask5(string fileName, 
             Checked c)
         {
-            int studentCount = 0;
+            int count = 0;
             int index = 0;
             string line = "";
             string[] parts = new string[0];
             int school = 0;
             int score = 0;
 
-            studentCount = c.ReadIntInRange(
+            count = c.ReadIntInRange(
                 "Введите кол-во учеников: ", 5, 50);
 
             using (StreamWriter writer = 
                 new StreamWriter(fileName, false))
             {
-                for (index = 0; index < studentCount; index++)
+                for (index = 0; index < count; index++)
                 {
                     Console.WriteLine($"Ученик {index + 1} " +
-                        "(введите: Фамилия Имя Школа Балл):");
+                        "(Фамилия Имя Школа Балл):");
                         
                     while (true)
                     {
@@ -349,25 +379,19 @@ namespace ConsoleApp1
 
                         if (parts.Length == 4)
                         {
-                            if (int.TryParse(parts[2], 
-                                out school) && 
-                                int.TryParse(parts[3], 
+                            if (int.TryParse(parts[2], out school)
+                                && int.TryParse(parts[3], 
                                 out score))
                             {
                                 if (school >= 1 && 
                                     school <= 100 && 
                                     score >= 1 && 
-                                    score <= 100)
-                                {
-                                    break;
-                                }
+                                    score <= 100) break;
                             }
                         }
-                        Console.WriteLine(
-                            "Ошибка! Введите 4 значения: " +
+                        Console.WriteLine("Ошибка! Введите: " +
                             "Фамилия Имя Школа(1-100) Балл(1-100)");
                     }
-                    
                     writer.WriteLine(line);
                 }
             }
@@ -376,18 +400,20 @@ namespace ConsoleApp1
         public static void Task5(Checked c)
         {
             string fileName = "task5_text.txt";
-            List<Student> school50 = new List<Student>();
+            int maxScore = -1;
+            int maxCount = 0;
+            string bestName1 = "";
+            string bestName2 = "";
+
+            int secondMaxScore = -1;
+            int secondCount = 0;
+            string secondName1 = "";
+
             string line = "";
             string[] parts = new string[0];
-            int index = 0;
-            int maxScore = -1;
-            int maxScoreCount = 0;
-            int secondMaxScore = -1;
-            int secondMaxCount = 0;
-            Student bestStudent = default(Student);
-            Student secondStudent = default(Student);
-            bool foundBest = false;
-            bool foundSecond = false;
+            int school = 0;
+            int score = 0;
+            string currentName = "";
 
             FillFileTask5(fileName, c);
 
@@ -409,121 +435,83 @@ namespace ConsoleApp1
                             
                     if (parts.Length == 4)
                     {
-                        if (int.Parse(parts[2]) == 50)
+                        school = int.Parse(parts[2]);
+                        
+                        if (school == 50)
                         {
-                            school50.Add(new Student(
-                                parts[0], parts[1], 50, 
-                                int.Parse(parts[3])));
+                            score = int.Parse(parts[3]);
+                            currentName = parts[0] + " " + 
+                                          parts[1];
+
+                            if (score > maxScore)
+                            {
+                                secondMaxScore = maxScore;
+                                secondCount = maxCount;
+                                secondName1 = bestName1;
+
+                                maxScore = score;
+                                maxCount = 1;
+                                bestName1 = currentName;
+                                bestName2 = "";
+                            }
+                            else if (score == maxScore)
+                            {
+                                maxCount++;
+                                if (maxCount == 2)
+                                {
+                                    bestName2 = currentName;
+                                }
+                            }
+                            else if (score > secondMaxScore)
+                            {
+                                secondMaxScore = score;
+                                secondCount = 1;
+                                secondName1 = currentName;
+                            }
+                            else if (score == secondMaxScore)
+                            {
+                                secondCount++;
+                            }
                         }
                     }
                 }
             }
 
-            if (school50.Count == 0)
+            if (maxCount == 0)
             {
                 Console.WriteLine("В школе 50 нет учеников.");
                 return;
             }
 
-            for (index = 0; index < school50.Count; index++)
+            if (maxCount >= 3)
             {
-                if (school50[index].Score > maxScore)
-                {
-                    maxScore = school50[index].Score;
-                }
+                Console.WriteLine("Более двух учеников " +
+                                  "набрали максимум.");
+                Console.WriteLine("Количество лучших: " + 
+                                  maxCount);
             }
-
-            for (index = 0; index < school50.Count; index++)
-            {
-                if (school50[index].Score == maxScore)
-                {
-                    maxScoreCount++;
-                    if (!foundBest)
-                    {
-                        bestStudent = school50[index];
-                        foundBest = true;
-                    }
-                }
-            }
-
-            if (maxScoreCount >= 3)
-            {
-                Console.WriteLine("Более двух учеников набрали " +
-                                  "максимальный балл.");
-                Console.WriteLine("Количество лучших учеников: " + 
-                                  maxScoreCount);
-            }
-            else if (maxScoreCount == 2)
+            else if (maxCount == 2)
             {
                 Console.WriteLine("Два ученика набрали " +
-                                  "максимальный балл:");
-                                  
-                for (index = 0; 
-                     index < school50.Count; 
-                     index++)
-                {
-                    if (school50[index].Score == maxScore)
-                    {
-                        Console.WriteLine(
-                            $"{school50[index].Surname} " +
-                            $"{school50[index].Name}");
-                    }
-                }
+                                  "максимум:");
+                Console.WriteLine(bestName1);
+                Console.WriteLine(bestName2);
             }
             else
             {
-                for (index = 0; 
-                     index < school50.Count; 
-                     index++)
+                if (secondCount == 1)
                 {
-                    if (school50[index].Score < maxScore 
-                        && school50[index].Score > 
-                        secondMaxScore)
-                    {
-                        secondMaxScore = 
-                            school50[index].Score;
-                    }
-                }
-
-                for (index = 0; 
-                     index < school50.Count; 
-                     index++)
-                {
-                    if (school50[index].Score == 
-                        secondMaxScore)
-                    {
-                        secondMaxCount++;
-                        if (!foundSecond)
-                        {
-                            secondStudent = 
-                                school50[index];
-                            foundSecond = true;
-                        }
-                    }
-                }
-
-                if (secondMaxCount == 1 && foundSecond)
-                {
-                    Console.WriteLine("Лучший ученик:");
-                    Console.WriteLine(
-                        $"{bestStudent.Surname} " +
-                        $"{bestStudent.Name}");
-                        
-                    Console.WriteLine("Второй по успеваемости:");
-                    Console.WriteLine(
-                        $"{secondStudent.Surname} " +
-                        $"{secondStudent.Name}");
+                    Console.WriteLine("Лучший:");
+                    Console.WriteLine(bestName1);
+                    Console.WriteLine("Второй:");
+                    Console.WriteLine(secondName1);
                 }
                 else
                 {
-                    Console.WriteLine("Наибольший балл набрал " +
-                                      "только один ученик, " +
-                                      "а следующий балл набрали " +
-                                      "несколько человек.");
-                    Console.WriteLine("Лучший ученик:");
-                    Console.WriteLine(
-                        $"{bestStudent.Surname} " +
-                        $"{bestStudent.Name}");
+                    Console.WriteLine("Один лучший, " +
+                                      "остальные равны.");
+                    Console.WriteLine("Лучший:");
+                    Console.WriteLine(bestName1);
                 }
             }
         }
